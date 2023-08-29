@@ -13,8 +13,8 @@ public class TicketRepositoryImpl implements TicketRepository {
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement stmt = connection.prepareStatement(
                     "INSERT INTO tickets (user, movie, seat_num, price) VALUES (?, ?, ?, ?)");
-            stmt.setString(1, ticket.getUser().getLogin());
-            stmt.setString(2, ticket.getMovie().getTitle());
+            stmt.setString(1, ticket.getUser());
+            stmt.setString(2, ticket.getMovie());
             stmt.setInt(3, ticket.getSeatNum());
             stmt.setDouble(4, ticket.getPrice());
             stmt.execute();

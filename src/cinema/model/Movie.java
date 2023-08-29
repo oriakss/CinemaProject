@@ -60,7 +60,7 @@ public class Movie {
         ticketList = new ArrayList<>();
         double price = Math.round((new Random().nextDouble(10) + 10) * 100.0) / 100.0;
         for (int i = 1; i <= 50; i++) {
-            ticketList.add(new Ticket(null, this, i, price, true));
+            ticketList.add(new Ticket(null, title, i, price, true));
         }
     }
 

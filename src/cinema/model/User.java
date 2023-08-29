@@ -2,7 +2,7 @@ package cinema.model;
 
 public class User {
 
-    private Integer id;
+    private int id;
     private String login;
     private String password;
     private UserRole role;

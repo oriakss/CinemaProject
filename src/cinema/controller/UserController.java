@@ -54,8 +54,8 @@ public class UserController {
 
     private static void buyTicket() {
         System.out.println("\nChoose a movie:\n");
-        for (int i = 0; i < MovieList.values().length; i++) {
-            System.out.println((i + 1) + " - " + MovieList.values()[i]);
+        for (int i = 0; i < movieCatalog.size(); i++) {
+            System.out.println((i + 1) + " - " + movieCatalog.get(i).getTitle());
         }
         System.out.print("\nEnter: ");
         String preVal = SCANNER.nextLine();
@@ -78,14 +78,14 @@ public class UserController {
             getErrorMessage();
             return;
         }
-        String movTitle = String.valueOf(MovieList.values()[val]);
+        String movTitle = movieCatalog.get(val).getTitle();
         for (cinema.model.Movie movie : movieCatalog) {
-            if (movTitle.equals(movie.getTitle())) {
+//            if (movTitle.equals(movie.getTitle())) {
                 List<Ticket> movieTickets = movie.getTicketList();
                 boolean flag = true;
                 for (int j = 0; flag && j < movieTickets.size(); j++) {
                     if (movieTickets.get(j).getIsNotBought()) {
-                        movieTickets.get(j).setUser(user);
+                        movieTickets.get(j).setUser(user.getLogin());
                         movieTickets.get(j).setIsNotBought(false);
                         purchasedTickets.add(movieTickets.get(j));
                         TICKET_SERVICE.addToDB(movieTickets.get(j));
@@ -93,7 +93,7 @@ public class UserController {
                     }
                 }
                 MOVIE_SERVICE.updateInDB(movie);
-            }
+//            }
         }
         System.out.println("\nTicket for the movie «" + movTitle + "» successfully purchased.");
     }
