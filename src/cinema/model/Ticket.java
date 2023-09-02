@@ -5,8 +5,6 @@ public class Ticket {
     private int id;
     private String user;
     private String movie;
-    //private User user;  //Если место не куплено, тогда значение пользователя должно быть пустым.
-    //private Movie movie;
     private int seatNum;
     private double price;
     private boolean isNotBought;
@@ -59,6 +57,15 @@ public class Ticket {
         this.isNotBought = isNotBought;
     }
 
+    public Ticket(int id, String user, String movie, int seatNum, double price, boolean isNotBought) {
+        this.id = id;
+        this.user = user;
+        this.movie = movie;
+        this.seatNum = seatNum;
+        this.price = price;
+        this.isNotBought = isNotBought;
+    }
+
     public Ticket(String user, String movie, int seatNum, double price, boolean isNotBought) {
         this.user = user;
         this.movie = movie;
@@ -69,12 +76,8 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return "Ticket{" +
-                "user=" + user +
-                ", movie=" + movie +
-                ", seatNum=" + seatNum +
-                ", price=" + price +
-                ", isNotBought=" + isNotBought +
-                '}';
+        return "\nMovie: " + movie +
+                "\nSeat num: " + seatNum +
+                "\nPrice: " + price;
     }
 }

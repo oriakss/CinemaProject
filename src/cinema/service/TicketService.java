@@ -4,6 +4,9 @@ import cinema.model.Ticket;
 
 public interface TicketService {
 
-    void addToDB(Ticket ticket);
+    void addToTicketTable(Ticket ticket);
 
+    void removeFromTicketTable(Ticket ticket);
+
+    int getIdFromTicketTable(Ticket ticket);
 }

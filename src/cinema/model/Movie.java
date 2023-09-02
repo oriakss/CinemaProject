@@ -11,6 +11,7 @@ public class Movie {
     private int id;
     private final String title;
     private final LocalDateTime date;
+    private final double ticketPrice;
     private List<Ticket> ticketList;
 
     public int getUnPurchasedTickets() {
@@ -39,6 +40,10 @@ public class Movie {
         return date;
     }
 
+    public double getTicketPrice() {
+        return ticketPrice;
+    }
+
     public List<Ticket> getTicketList() {
         return ticketList;
     }
@@ -47,20 +52,21 @@ public class Movie {
         this.ticketList = ticketList;
     }
 
-    public Movie(int id, String title, LocalDateTime date, List<Ticket> ticketList) {
+    public Movie(int id, String title, LocalDateTime date, double ticketPrice, List<Ticket> ticketList) {
         this.id = id;
         this.title = title;
         this.date = date;
+        this.ticketPrice = ticketPrice;
         this.ticketList = ticketList;
     }
 
     public Movie(String title, LocalDateTime date) {
         this.title = title;
         this.date = date;
+        ticketPrice = Math.round((new Random().nextDouble(10) + 10) * 100.0) / 100.0;
         ticketList = new ArrayList<>();
-        double price = Math.round((new Random().nextDouble(10) + 10) * 100.0) / 100.0;
         for (int i = 1; i <= 50; i++) {
-            ticketList.add(new Ticket(null, title, i, price, true));
+            ticketList.add(new Ticket(null, title, i, ticketPrice, true));
         }
     }
 

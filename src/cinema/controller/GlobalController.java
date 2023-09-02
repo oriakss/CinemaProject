@@ -35,16 +35,16 @@ public class GlobalController {
         while (true) {
             System.out.print("""
                                         
-                    1 - Register
-                    2 - Sign in
+                    1 - Sign in
+                    2 - Register
                     0 - Exit the cinema
                     3 - getAll(temp)
                     4 - getUserById(temp)
                                   
                     Enter:\s""");
             switch (SCANNER.nextLine()) {
-                case "1" -> signUp();
-                case "2" -> singIn();
+                case "1" -> singIn();
+                case "2" -> signUp();
                 case "3" -> getAll();
                 case "4" -> getUserById();
                 case "0" -> {
@@ -63,7 +63,7 @@ public class GlobalController {
             for (int i = 0; i < MovieList.values().length; i++) {
                 movie = new Movie(MovieList.values()[i] + "", getDate());
                 movieCatalog.add(movie);
-                MOVIE_SERVICE.addToDB(movie);
+                MOVIE_SERVICE.addToMovieTable(movie);
             }
         } else {
             movieCatalog = MOVIE_SERVICE.getMovieTable();

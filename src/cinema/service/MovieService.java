@@ -10,7 +10,7 @@ public interface MovieService {
 
     List<Movie> getMovieTable();
 
-    void addToDB(Movie movie);
+    void addToMovieTable(Movie movie);
 
-    void updateInDB(Movie movie);
+    void updateMovieTable(Movie movie);
 }

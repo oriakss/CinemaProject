@@ -20,13 +20,13 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void addToDB(Movie movie) {
-        movieRepository.addToDB(movie);
+    public void addToMovieTable(Movie movie) {
+        movieRepository.addToMovieTable(movie);
     }
 
     @Override
-    public void updateInDB(Movie movie) {
-        movieRepository.updateInDB(movie);
+    public void updateMovieTable(Movie movie) {
+        movieRepository.updateMovieTable(movie);
     }
 
     public MovieServiceImpl(MovieRepository movieRepository) {
