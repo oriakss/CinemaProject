@@ -25,6 +25,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public void removeFromMovieTable(String title) {
+        movieRepository.removeFromMovieTable(title);
+    }
+
+    @Override
     public void updateMovieTable(Movie movie) {
         movieRepository.updateMovieTable(movie);
     }

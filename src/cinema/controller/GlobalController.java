@@ -3,6 +3,7 @@ package cinema.controller;
 import cinema.model.Movie;
 import cinema.model.MovieList;
 import cinema.model.User;
+import cinema.model.UserRole;
 import cinema.repository.MovieRepository;
 import cinema.repository.MovieRepositoryImpl;
 import cinema.repository.UserRepository;
@@ -15,6 +16,8 @@ import cinema.service.UserServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cinema.controller.AdminController.openAdminMenu;
+import static cinema.controller.ManagerController.openManagerMenu;
 import static cinema.controller.UserController.openUserMenu;
 import static cinema.util.DataGenerator.getDate;
 import static cinema.util.InputErrorMessage.getErrorMessage;
@@ -30,6 +33,7 @@ public class GlobalController {
     public static List<Movie> movieCatalog;
 
     public static void start() {
+        createAdminAndManager();
         prepareMovieCatalog();
         System.out.println("Welcome to the cinema!");
         while (true) {
@@ -56,6 +60,20 @@ public class GlobalController {
         }
     }
 
+    private static void createAdminAndManager() {
+        if (USER_SERVICE.IsNotExistAdminAndManager()) {
+            User admin = new User();
+            admin.setLogin("admin");
+            admin.setPassword("admin");
+            admin.setRole(UserRole.ADMIN);
+            User manager = new User();
+            manager.setLogin("manager");
+            manager.setPassword("manager");
+            manager.setRole(UserRole.MANAGER);
+            USER_SERVICE.createAdminAndManager(admin, manager);
+        }
+    }
+
     private static void prepareMovieCatalog() {
         if (MOVIE_SERVICE.checkIsEmptyMovieTable()) {
             movieCatalog = new ArrayList<>();
@@ -68,7 +86,6 @@ public class GlobalController {
         } else {
             movieCatalog = MOVIE_SERVICE.getMovieTable();
         }
-
     }
 
     private static void signUp() {
@@ -87,8 +104,17 @@ public class GlobalController {
         System.out.print("Enter password: ");
         String password = SCANNER.nextLine();
         user = new User(username, password);
+        if (username.equals("admin")) {
+            user.setRole(UserRole.ADMIN);
+        } else if (username.equals("manager")) {
+            user.setRole(UserRole.MANAGER);
+        }
         if (USER_SERVICE.signIn(user)) {
-            openUserMenu();
+            switch (user.getRole()) {
+                case USER -> openUserMenu();
+                case MANAGER -> openManagerMenu();
+                case ADMIN -> openAdminMenu();
+            }
         }
     }
 

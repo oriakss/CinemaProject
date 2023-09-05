@@ -110,4 +110,30 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean IsNotExistAdminAndManager() {
+        return true;
+    }
+
+    @Override
+    public boolean createAdminAndManager(User admin, User manager) {
+        try (Connection connection = ConnectionManager.open()) {
+            PreparedStatement adminStatement = connection
+                    .prepareStatement("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+            PreparedStatement managerStatement = connection
+                    .prepareStatement("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+            adminStatement.setString(1, admin.getLogin());
+            adminStatement.setString(2, admin.getPassword());
+            adminStatement.setString(3, admin.getRole().name());
+            managerStatement.setString(1, manager.getLogin());
+            managerStatement.setString(2, manager.getPassword());
+            managerStatement.setString(3, manager.getRole().name());
+            adminStatement.execute();
+            managerStatement.execute();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 }

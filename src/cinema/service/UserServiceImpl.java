@@ -31,6 +31,16 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public boolean IsNotExistAdminAndManager() {
+        return userRepository.IsNotExistAdminAndManager();
+    }
+
+    @Override
+    public boolean createAdminAndManager(User admin, User manager) {
+        return userRepository.createAdminAndManager(admin, manager);
+    }
+
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

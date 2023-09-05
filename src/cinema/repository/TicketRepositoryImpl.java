@@ -25,11 +25,11 @@ public class TicketRepositoryImpl implements TicketRepository {
     }
 
     @Override
-    public void removeFromTicketTable(Ticket ticket) {
+    public boolean removeFromTicketTable(Ticket ticket) {
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement stmt = connection.prepareStatement("DELETE FROM tickets WHERE id = ?");
             stmt.setInt(1, ticket.getId());
-            stmt.execute();
+            return stmt.execute();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

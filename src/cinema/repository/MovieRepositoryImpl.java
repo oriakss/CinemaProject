@@ -26,8 +26,7 @@ public class MovieRepositoryImpl implements MovieRepository {
         List<Movie> movies = new ArrayList<>();
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement moviesStatement = connection.prepareStatement("SELECT * FROM movies");
-            PreparedStatement ticketsStatement = connection.prepareStatement(
-                    "SELECT * FROM tickets");
+            PreparedStatement ticketsStatement = connection.prepareStatement("SELECT * FROM tickets");
             ResultSet moviesResultSet = moviesStatement.executeQuery();
             ResultSet ticketsResultSet = ticketsStatement.executeQuery();
 
@@ -75,6 +74,17 @@ public class MovieRepositoryImpl implements MovieRepository {
             stmt.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void removeFromMovieTable(String title) {
+        try (Connection connection = ConnectionManager.open()) {
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM movies WHERE title = ?");
+            stmt.setString(1, title);
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 

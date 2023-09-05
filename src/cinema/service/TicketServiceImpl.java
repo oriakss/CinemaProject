@@ -13,8 +13,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void removeFromTicketTable(Ticket ticket) {
-        ticketRepository.removeFromTicketTable(ticket);
+    public boolean removeFromTicketTable(Ticket ticket) {
+        return ticketRepository.removeFromTicketTable(ticket);
     }
 
     @Override

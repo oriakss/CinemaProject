@@ -6,7 +6,7 @@ public interface TicketRepository {
 
     void addToTicketTable(Ticket ticket);
 
-    void removeFromTicketTable(Ticket ticket);
+    boolean removeFromTicketTable(Ticket ticket);
 
     int getIdFromTicketTable(Ticket ticket);
 }

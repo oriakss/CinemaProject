@@ -14,4 +14,8 @@ public interface UserService {
     Optional<User> getUserById(Integer userId);
 
     List<User> getAll();
+
+    boolean IsNotExistAdminAndManager();
+
+    boolean createAdminAndManager(User admin, User manager);
 }

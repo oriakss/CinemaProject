@@ -12,5 +12,7 @@ public interface MovieService {
 
     void addToMovieTable(Movie movie);
 
+    void removeFromMovieTable(String title);
+
     void updateMovieTable(Movie movie);
 }

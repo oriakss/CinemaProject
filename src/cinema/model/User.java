@@ -32,7 +32,7 @@ public class User {
     }
 
     public UserRole getRole() {
-        return UserRole.USER;
+        return role;
     }
 
     public void setRole(UserRole role) {
@@ -42,7 +42,7 @@ public class User {
     public User(String login, String password) {
         this.login = login;
         this.password = password;
-        this.role = getRole();
+        this.role = UserRole.USER;
     }
 
     public User(Integer id, String login, String password, String role) {
