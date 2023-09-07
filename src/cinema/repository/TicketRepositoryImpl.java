@@ -2,14 +2,17 @@ package cinema.repository;
 
 import cinema.model.Ticket;
 import cinema.util.ConnectionManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class TicketRepositoryImpl implements TicketRepository {
 
+    @Override
     public void addToTicketTable(Ticket ticket) {
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement stmt = connection.prepareStatement(
@@ -20,7 +23,8 @@ public class TicketRepositoryImpl implements TicketRepository {
             stmt.setDouble(4, ticket.getPrice());
             stmt.execute();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -29,9 +33,11 @@ public class TicketRepositoryImpl implements TicketRepository {
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement stmt = connection.prepareStatement("DELETE FROM tickets WHERE id = ?");
             stmt.setInt(1, ticket.getId());
-            return stmt.execute();
+            stmt.execute();
+            return true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -49,7 +55,8 @@ public class TicketRepositoryImpl implements TicketRepository {
             }
             return 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

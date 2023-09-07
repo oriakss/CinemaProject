@@ -1,9 +1,13 @@
 package cinema.controller;
 
-import static cinema.controller.AllRoleController.*;
+import lombok.extern.slf4j.Slf4j;
+
+import static cinema.controller.helper.AllRoleController.*;
+import static cinema.controller.GlobalController.user;
 import static cinema.util.InputErrorMessage.getErrorMessage;
 import static cinema.util.ScannerUtil.SCANNER;
 
+@Slf4j
 public class UserController {
 
     public static void openUserMenu() {
@@ -23,6 +27,7 @@ public class UserController {
                 case "2" -> showTickets();
                 case "3" -> returnTicket();
                 case "0" -> {
+                    log.info("User \"{}\" is logged out", user.getLogin());
                     return;
                 }
                 default -> getErrorMessage();

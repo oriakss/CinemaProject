@@ -13,9 +13,11 @@ public interface UserRepository {
 
     Optional<User> getUserById(Integer userId);
 
-    List<User> getAll();
+    List<User> getAllUsers();
 
     boolean IsNotExistAdminAndManager();
 
-    boolean createAdminAndManager(User admin, User manager);
+    void createAdminAndManager(User admin, User manager);
+
+    boolean deleteAccount(int id);
 }

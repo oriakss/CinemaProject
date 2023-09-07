@@ -1,43 +1,18 @@
 package cinema.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
 
     private int id;
     private String login;
     private String password;
     private UserRole role;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
 
     public User(String login, String password) {
         this.login = login;
@@ -52,15 +27,11 @@ public class User {
         this.role = UserRole.valueOf(role);
     }
 
-    public User() {
-    }
-
     @Override
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
                 ", username='" + login + '\'' +
-                ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

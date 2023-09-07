@@ -1,7 +1,7 @@
 package cinema.model;
 
 public enum MovieList {
-    BladeRunner,
+    BladeRunner2042,
     TheRitual,
     ItFollows,
     Hereditary,

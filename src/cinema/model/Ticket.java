@@ -1,5 +1,12 @@
 package cinema.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class Ticket {
 
     private int id;
@@ -7,71 +14,14 @@ public class Ticket {
     private String movie;
     private int seatNum;
     private double price;
-    private boolean isNotBought;
+    private boolean ticketBought;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getMovie() {
-        return movie;
-    }
-
-    public void setMovie(String movie) {
-        this.movie = movie;
-    }
-
-    public int getSeatNum() {
-        return seatNum;
-    }
-
-    public void setSeatNum(int seatNum) {
-        this.seatNum = seatNum;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public boolean getIsNotBought() {
-        return isNotBought;
-    }
-
-    public void setIsNotBought(boolean isNotBought) {
-        this.isNotBought = isNotBought;
-    }
-
-    public Ticket(int id, String user, String movie, int seatNum, double price, boolean isNotBought) {
-        this.id = id;
+    public Ticket(String user, String movie, int seatNum, double price, boolean ticketBought) {
         this.user = user;
         this.movie = movie;
         this.seatNum = seatNum;
         this.price = price;
-        this.isNotBought = isNotBought;
-    }
-
-    public Ticket(String user, String movie, int seatNum, double price, boolean isNotBought) {
-        this.user = user;
-        this.movie = movie;
-        this.seatNum = seatNum;
-        this.price = price;
-        this.isNotBought = isNotBought;
+        this.ticketBought = ticketBought;
     }
 
     @Override

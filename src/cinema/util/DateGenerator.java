@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Random;
 
-public final class DataGenerator {
+public final class DateGenerator {
 
     public static LocalDateTime getDate() {
         Random random = new Random();

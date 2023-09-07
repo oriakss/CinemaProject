@@ -1,9 +1,13 @@
 package cinema.controller;
 
-import static cinema.controller.AllRoleController.*;
+import lombok.extern.slf4j.Slf4j;
+
+import static cinema.controller.helper.AllRoleController.*;
+import static cinema.controller.GlobalController.user;
 import static cinema.util.InputErrorMessage.getErrorMessage;
 import static cinema.util.ScannerUtil.SCANNER;
 
+@Slf4j
 public class AdminController {
 
     static void openAdminMenu() {
@@ -16,10 +20,11 @@ public class AdminController {
                     2 - Show my tickets
                     3 - Return ticket
                     4 - Edit movie list
-                    5 - Buy a ticket to a user
-                    6 - Return user ticket
-                    7 - Create user
-                    8 - Delete user
+                    5 - Get user list
+                    6 - Buy ticket to user
+                    7 - Return user ticket
+                    8 - Create user
+                    9 - Delete user
                     0 - Sign out
                                     
                     Enter:\s""");
@@ -28,11 +33,13 @@ public class AdminController {
                 case "2" -> showTickets();
                 case "3" -> returnTicket();
                 case "4" -> editMovieList();
-                case "5" -> buyTicketToUser();
-                case "6" -> returnUserTicket();
-                case "7" -> createUser();
-                case "8" -> deleteUser();
+                case "5" -> getAllUsers();
+                case "6" -> buyTicketToUser();
+                case "7" -> returnUserTicket();
+                case "8" -> createUser();
+                case "9" -> deleteUser();
                 case "0" -> {
+                    log.info("User \"{}\" is logged out", user.getLogin());
                     return;
                 }
                 default -> getErrorMessage();

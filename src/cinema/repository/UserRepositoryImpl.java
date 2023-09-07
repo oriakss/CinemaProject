@@ -1,8 +1,12 @@
 package cinema.repository;
 
+import cinema.exeptions.UserExistsException;
+import cinema.exeptions.UserNotFound;
+import cinema.exeptions.WrongPasswordException;
 import cinema.model.User;
 import cinema.model.UserRole;
 import cinema.util.ConnectionManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static cinema.util.PasswordHashing.hashPassword;
+
+@Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
     private boolean checkUserByLogin(String login) {
@@ -23,7 +30,8 @@ public class UserRepositoryImpl implements UserRepository {
                 return false;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);  //писать логичные исключения
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return true;
     }
@@ -34,16 +42,22 @@ public class UserRepositoryImpl implements UserRepository {
             boolean isNotExistUser = checkUserByLogin(user.getLogin());
             if (isNotExistUser) {
                 PreparedStatement stmt = connection
-                        .prepareStatement("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+                        .prepareStatement("INSERT INTO users (username, password, salt, role) VALUES (?, ?, ?, ?)");
                 stmt.setString(1, user.getLogin());
-                stmt.setString(2, user.getPassword());
-                stmt.setString(3, UserRole.USER.name());
-                return stmt.execute();
-            } else {
-                throw new RuntimeException(String.format("Логин '%s' уже существует!", user.getLogin()));
-            }
-        } catch (SQLException e) {
+                String[] passAndSalt = hashPassword(user.getPassword(), null);
+                stmt.setString(2, passAndSalt[0]);
+                stmt.setString(3, passAndSalt[1]);
+                stmt.setString(4, UserRole.USER.name());
+                return !stmt.execute();
+            } else
+                throw new UserExistsException(String.format("Login '%s' already exists!", user.getLogin()));
+        } catch (UserExistsException e) {
+            System.out.println();
+            System.out.println(e.getMessage());
             return false;
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -52,21 +66,32 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = ConnectionManager.open()) {
             boolean isNotExistUserLogin = checkUserByLogin(user.getLogin());
             if (isNotExistUserLogin) {
-                throw new RuntimeException(
-                        String.format("Пользователя с логином '%s' не существует!", user.getLogin()));
+                throw new UserNotFound(
+                        String.format("User with login '%s' does not exist!", user.getLogin()));
             } else {
-                PreparedStatement stmt = connection.prepareStatement("SELECT password FROM users WHERE username=?");
+                PreparedStatement stmt = connection
+                        .prepareStatement("SELECT password, salt FROM users WHERE username=?");
                 stmt.setString(1, user.getLogin());
                 ResultSet resultSet = stmt.executeQuery();
-                if (resultSet.next() && resultSet.getString("password").equals(user.getPassword())) {
-                    return true;
-                } else {
-                    throw new RuntimeException("Не верный пароль!");
+                if (resultSet.next()) {
+                    String password = resultSet.getString("password");
+                    String salt = resultSet.getString("salt");
+                    String checkPass = hashPassword(user.getPassword(), salt)[0];
+                    if (password.equals(checkPass)) {
+                        return true;
+                    } else {
+                        throw new WrongPasswordException("Wrong password!");
+                    }
                 }
             }
+        } catch (WrongPasswordException e) {
+            System.out.println();
+            System.out.println(e.getMessage());
         } catch (SQLException e) {
-            return false;
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
+        return false;
     }
 
     @Override
@@ -86,18 +111,22 @@ public class UserRepositoryImpl implements UserRepository {
                 return user;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);  //писать логичные исключения
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return Optional.empty();
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM users");
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
+                if (resultSet.getString("role").equals(UserRole.ADMIN.name())
+                        || resultSet.getString("role").equals(UserRole.MANAGER.name()))
+                    continue;
                 int id = resultSet.getInt("id");
                 String login = resultSet.getString("username");
                 String password = resultSet.getString("password");
@@ -107,33 +136,63 @@ public class UserRepositoryImpl implements UserRepository {
             }
             return users;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
     public boolean IsNotExistAdminAndManager() {
-        return true;
+        try (Connection connection = ConnectionManager.open()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String role = resultSet.getString("role");
+                if (role.equals(UserRole.ADMIN.name()) || role.equals(UserRole.MANAGER.name())) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
-    public boolean createAdminAndManager(User admin, User manager) {
+    public void createAdminAndManager(User admin, User manager) {
         try (Connection connection = ConnectionManager.open()) {
             PreparedStatement adminStatement = connection
-                    .prepareStatement("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+                    .prepareStatement("INSERT INTO users (username, password, salt, role) VALUES (?, ?, ?, ?)");
             PreparedStatement managerStatement = connection
-                    .prepareStatement("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+                    .prepareStatement("INSERT INTO users (username, password, salt, role) VALUES (?, ?, ?, ?)");
             adminStatement.setString(1, admin.getLogin());
-            adminStatement.setString(2, admin.getPassword());
-            adminStatement.setString(3, admin.getRole().name());
+            String[] adminPassAndSalt = hashPassword(admin.getPassword(), null);
+            adminStatement.setString(2, adminPassAndSalt[0]);
+            adminStatement.setString(3, adminPassAndSalt[1]);
+            adminStatement.setString(4, admin.getRole().name());
             managerStatement.setString(1, manager.getLogin());
-            managerStatement.setString(2, manager.getPassword());
-            managerStatement.setString(3, manager.getRole().name());
+            String[] managerPassAndSalt = hashPassword(manager.getPassword(), null);
+            managerStatement.setString(2, managerPassAndSalt[0]);
+            managerStatement.setString(3, managerPassAndSalt[1]);
+            managerStatement.setString(4, manager.getRole().name());
             adminStatement.execute();
             managerStatement.execute();
-            return true;
         } catch (SQLException e) {
-            return false;
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean deleteAccount(int id) {
+        try (Connection connection = ConnectionManager.open()) {
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM users WHERE id = ?");
+            stmt.setInt(1, id);
+            return !stmt.execute();
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

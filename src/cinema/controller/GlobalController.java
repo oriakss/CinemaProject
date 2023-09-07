@@ -12,6 +12,7 @@ import cinema.service.MovieService;
 import cinema.service.MovieServiceImpl;
 import cinema.service.UserService;
 import cinema.service.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +20,15 @@ import java.util.List;
 import static cinema.controller.AdminController.openAdminMenu;
 import static cinema.controller.ManagerController.openManagerMenu;
 import static cinema.controller.UserController.openUserMenu;
-import static cinema.util.DataGenerator.getDate;
+import static cinema.util.DateGenerator.getDate;
 import static cinema.util.InputErrorMessage.getErrorMessage;
 import static cinema.util.ScannerUtil.SCANNER;
 
+@Slf4j
 public class GlobalController {
 
     private static final UserRepository USER_REPOSITORY = new UserRepositoryImpl();
-    private static final UserService USER_SERVICE = new UserServiceImpl(USER_REPOSITORY);
+    public static final UserService USER_SERVICE = new UserServiceImpl(USER_REPOSITORY);
     private static final MovieRepository MOVIE_REPOSITORY = new MovieRepositoryImpl();
     private static final MovieService MOVIE_SERVICE = new MovieServiceImpl(MOVIE_REPOSITORY);
     public static User user;
@@ -35,6 +37,7 @@ public class GlobalController {
     public static void start() {
         createAdminAndManager();
         prepareMovieCatalog();
+        log.info("Application launched.");
         System.out.println("Welcome to the cinema!");
         while (true) {
             System.out.print("""
@@ -42,17 +45,14 @@ public class GlobalController {
                     1 - Sign in
                     2 - Register
                     0 - Exit the cinema
-                    3 - getAll(temp)
-                    4 - getUserById(temp)
                                   
                     Enter:\s""");
             switch (SCANNER.nextLine()) {
                 case "1" -> singIn();
                 case "2" -> signUp();
-                case "3" -> getAll();
-                case "4" -> getUserById();
                 case "0" -> {
                     System.out.println("\nGoodbye!");
+                    log.info("Application completed successfully.");
                     return;
                 }
                 default -> getErrorMessage();
@@ -94,7 +94,9 @@ public class GlobalController {
         System.out.print("Enter password: ");
         String password = SCANNER.nextLine();
         user = new User(username, password);
-        USER_SERVICE.signUp(user);
+        if (!USER_SERVICE.signUp(user))
+            return;
+        log.info("User \"{}\" has registered.", user.getLogin());
         openUserMenu();
     }
 
@@ -110,24 +112,12 @@ public class GlobalController {
             user.setRole(UserRole.MANAGER);
         }
         if (USER_SERVICE.signIn(user)) {
+            log.info("User \"{}\" is logged in.", user.getLogin());
             switch (user.getRole()) {
                 case USER -> openUserMenu();
                 case MANAGER -> openManagerMenu();
                 case ADMIN -> openAdminMenu();
             }
         }
-    }
-
-    private static void getAll() {
-        USER_SERVICE.getAll();
-    }
-
-    private static void getUserById() {
-        System.out.println("Enter user id: ");
-        int usrId = Integer.parseInt(SCANNER.nextLine());
-        User user = USER_SERVICE.getUserById(usrId)
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("User ID %d not found!", usrId)));
-        System.out.println(user);
     }
 }

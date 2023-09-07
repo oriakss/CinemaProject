@@ -1,9 +1,13 @@
 package cinema.controller;
 
-import static cinema.controller.AllRoleController.*;
+import lombok.extern.slf4j.Slf4j;
+
+import static cinema.controller.helper.AllRoleController.*;
+import static cinema.controller.GlobalController.user;
 import static cinema.util.InputErrorMessage.getErrorMessage;
 import static cinema.util.ScannerUtil.SCANNER;
 
+@Slf4j
 public class ManagerController {
 
     public static void openManagerMenu() {
@@ -16,8 +20,9 @@ public class ManagerController {
                     2 - Show my tickets
                     3 - Return ticket
                     4 - Edit movie list
-                    5 - Buy a ticket to a user
-                    6 - Return user ticket
+                    5 - Get user list
+                    6 - Buy ticket to user
+                    7 - Return user ticket
                     0 - Sign out
                                     
                     Enter:\s""");
@@ -25,10 +30,12 @@ public class ManagerController {
                 case "1" -> buyTicket();
                 case "2" -> showTickets();
                 case "3" -> returnTicket();
-                case "4" -> editMovieList();
-                case "5" -> buyTicketToUser();
-                case "6" -> returnUserTicket();
+                case "4" -> editMovies();
+                case "5" -> getAllUsers();
+                case "6" -> buyTicketToUser();
+                case "7" -> returnUserTicket();
                 case "0" -> {
+                    log.info("User \"{}\" is logged out", user.getLogin());
                     return;
                 }
                 default -> getErrorMessage();

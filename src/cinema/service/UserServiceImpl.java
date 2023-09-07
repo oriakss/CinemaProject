@@ -26,9 +26,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        userRepository.getAll().forEach(System.out::println);
-        return null;
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
     }
 
     @Override
@@ -37,12 +36,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean createAdminAndManager(User admin, User manager) {
-        return userRepository.createAdminAndManager(admin, manager);
+    public void createAdminAndManager(User admin, User manager) {
+        userRepository.createAdminAndManager(admin, manager);
+    }
+
+    @Override
+    public boolean deleteAccount(int id) {
+        return userRepository.deleteAccount(id);
     }
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 }

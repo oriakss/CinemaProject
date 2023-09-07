@@ -16,7 +16,6 @@ public final class PropertiesUtil {
         return PROPERTIES.getProperty(key);
     }
 
-
     private static void loadProperties() {
         try (InputStream stream = PropertiesUtil.class.getClassLoader()
                 .getResourceAsStream("application.properties")) {
@@ -26,6 +25,5 @@ public final class PropertiesUtil {
         }
     }
 
-    private PropertiesUtil() {
-    }
+    private PropertiesUtil() {}
 }

@@ -1,63 +1,34 @@
 package cinema.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class Movie {
 
     private int id;
     private final String title;
-    private final LocalDateTime date;
-    private final double ticketPrice;
-    private List<Ticket> ticketList;
+    private LocalDateTime date;
+    private double ticketPrice;
+    private final List<Ticket> ticketList;
 
     public int getUnPurchasedTickets() {
         int count = 0;
         for (Ticket ticket : ticketList) {
-            if (ticket.getIsNotBought()) {
+            if (ticket.isTicketBought()) {
                 count++;
             }
         }
         return count;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public double getTicketPrice() {
-        return ticketPrice;
-    }
-
-    public List<Ticket> getTicketList() {
-        return ticketList;
-    }
-
-    public void setTicketList(List<Ticket> ticketList) {
-        this.ticketList = ticketList;
-    }
-
-    public Movie(int id, String title, LocalDateTime date, double ticketPrice, List<Ticket> ticketList) {
-        this.id = id;
-        this.title = title;
-        this.date = date;
-        this.ticketPrice = ticketPrice;
-        this.ticketList = ticketList;
     }
 
     public Movie(String title, LocalDateTime date) {
