@@ -84,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
                     }
                 }
             }
-        } catch (WrongPasswordException e) {
+        } catch (WrongPasswordException | UserNotFound e) {
             System.out.println();
             System.out.println(e.getMessage());
         } catch (SQLException e) {

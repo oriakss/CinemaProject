@@ -80,8 +80,7 @@ public class AllRoleController {
             if (isThereTicket) {
                 log.info("\"{}\" bought a movie ticket.", user.getLogin());
                 System.out.println("\nTicket for the movie «" + movTitle + "» successfully purchased.");
-            }
-            else
+            } else
                 System.out.println("\nThere are no more tickets for the movie «" + movTitle + "»!");
         }
     }
@@ -137,8 +136,7 @@ public class AllRoleController {
             if (ticketReturned) {
                 log.info("\"{}\" returned a movie ticket.", user.getLogin());
                 System.out.println("\nTicket with ID: " + val + " returned.");
-            }
-            else
+            } else
                 System.out.println("\nTicket with ID: " + val + " does not exist!");
         }
     }
@@ -199,9 +197,26 @@ public class AllRoleController {
         for (Movie movie : movieCatalog) {
             if (movie.getTitle().equals(title)) {
                 System.out.print("\nEnter a price: ");
-                double price = SCANNER.nextDouble();
-
-                movie.setTicketPrice(price);
+                String price = SCANNER.nextLine();
+                for (int i = 0, count = 0; i < price.length(); i++) {
+                    if ((price.charAt(i) == '.')) {
+                        count++;
+                        if (count == 2) {
+                            getErrorMessage();
+                            return;
+                        }
+                        continue;
+                    }
+                    if (!(price.charAt(i) + "").matches("[0-9]")) {
+                        getErrorMessage();
+                        return;
+                    }
+                }
+                if (price.equals(".")) {
+                    getErrorMessage();
+                    return;
+                }
+                movie.setTicketPrice(Double.parseDouble(price));
                 MOVIE_SERVICE.updateMovieTable(movie);
                 log.info("\"{}\" changed a price of a movie.", user.getLogin());
                 System.out.println("\nThe price of the movie «" + title + "» has been changed.");
@@ -278,8 +293,8 @@ public class AllRoleController {
         String username = SCANNER.nextLine();
         System.out.print("Enter password: ");
         String password = SCANNER.nextLine();
-        user = new User(username, password);
-        if (USER_SERVICE.signUp(user)) {
+        User newUser = new User(username, password);
+        if (USER_SERVICE.signUp(newUser)) {
             log.info("\"{}\" has registered a new user.", user.getLogin());
             System.out.println("\nUser registered.");
         }
@@ -302,7 +317,7 @@ public class AllRoleController {
         System.out.print("\nEnter user id: ");
         String val = SCANNER.nextLine();
         if (checkInput(val)) {
-            throw new RuntimeException();
+            return null;
         }
         int usrId = Integer.parseInt(val);
         try {
